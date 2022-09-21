@@ -1,0 +1,41 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@200;400;700&display=swap');
+
+  :root {
+    --green: #1DB954;
+    --white: #FFFFFF;
+    --black: #191414;
+    --black2: #121212;
+    --dark-gray: #282828;
+  }
+
+  html,
+  body {
+    color: white;
+    margin: 0;
+    padding: 0;
+    font-family: 'Readex Pro', sans-serif;
+    width: 100%;
+    height: 100%;
+  }
+
+  body {
+    background-color: var(--black2);
+    width: 100%;
+  }
+
+  a {
+    text-decoration: none;
+    color: unset
+  }
+
+  a:hover {
+    color: var(--green)
+  }
+</style>
+
+<body>
+  {% include "header.html" ignore missing %}
+  {% block content %}{% endblock %}
+  {% include "footer.html" ignore missing %}
+</body>

@@ -1,0 +1,21 @@
+version: '3.1'
+services:
+  db:
+    image: mariadb
+    restart: unless-stopped
+    volumes:
+      - ./docker/db-data:/var/lib/mysql
+    ports:
+      - 3306:3306
+    environment:
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+  adminer:
+    depends_on:
+      - db
+    image: adminer
+    restart: unless-stopped
+    ports:
+      - 8080:8080

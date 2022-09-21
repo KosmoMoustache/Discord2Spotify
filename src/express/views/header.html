@@ -1,0 +1,63 @@
+<style>
+  header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 4em;
+    backdrop-filter: blur(60px);
+  }
+
+  header>img {
+    height: 80%;
+  }
+
+  ul li {
+    list-style: none;
+    display: inline-block;
+    font-size: x-large;
+
+  }
+
+  li:nth-child(even) {
+    font-size: x-large;
+  }
+
+  .sticky {
+    position: fixed;
+    top: 0;
+    width: 100%;
+  }
+</style>
+<header>
+  <img src='logo.svg' />
+  <div class="menu">
+    <ul>
+      <li><a href="/">Accueil</a></li>
+      {% if user %}
+      <li>|</li>
+      <li><a href="/account">Compte</a></li>
+      <li>|</li>
+      <li><a href="/playlist">Playlist</a></li>
+      <li>|</li>
+      <li><a href="/logout">Se Déconnecter</a></li>
+      {% else %}
+      <li>|</li>
+      <li><a href="/login">Se Connecter</a></li>
+      {% endif %}
+    </ul>
+  </div>
+</header>
+<script>
+  window.onscroll = function () { myFunction() };
+
+  var header = document.getElementsByTagName('header')[0];
+  var sticky = header.offsetTop;
+
+  function myFunction() {
+    if (window.pageYOffset > sticky) {
+      header.classList.add("sticky");
+    } else {
+      header.classList.remove("sticky");
+    }
+  }
+</script>

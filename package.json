@@ -1,0 +1,49 @@
+{
+  "name": "addtospotify",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "typings": "global.d.ts",
+  "scripts": {
+    "start": "ts-node ./src/index.ts",
+    "dev": "nodemon ./src/index.ts",
+    "build": "tsc ./src/index.ts",
+    "lint": "eslint ./src/**/*.ts --config .eslintrc.json --fix",
+    "deployCommands": "ts-node ./src/deploy_commands.ts",
+    "exp-dev": "nodemon ./express/index.ts",
+    "exp-start": "ts-node ./express/index.ts",
+    "migrate": "knex migrate:up",
+    "rollback": "knex migrate:rollback",
+    "seed": "knex seed:up",
+    "dockerbuild": "docker build -t local/discordtwospotify:latest ."
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@discordjs/rest": "^1.1.0",
+    "consolidate": "^0.16.0",
+    "discord.js": "^14.3.0",
+    "dotenv": "^16.0.2",
+    "express": "^4.18.1",
+    "express-session": "^1.17.3",
+    "knex": "^2.3.0",
+    "moment": "^2.29.4",
+    "mysql2": "^2.3.3",
+    "nunjucks": "^3.2.3",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.3",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/consolidate": "^0.14.1",
+    "@types/express": "^4.17.13",
+    "@types/express-session": "^1.17.5",
+    "@types/node": "^18.7.16",
+    "@types/uuid": "^8.3.4",
+    "@typescript-eslint/eslint-plugin": "^5.36.2",
+    "@typescript-eslint/parser": "^5.36.2",
+    "eslint": "^8.23.0",
+    "eslint-plugin-import": "^2.26.0",
+    "nodemon": "^2.0.20"
+  }
+}

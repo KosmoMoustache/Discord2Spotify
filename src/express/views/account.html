@@ -1,0 +1,26 @@
+{% extends 'layout.html' %} {% block content %}
+<style>
+  p {
+    padding-left: 2em;
+  }
+
+  h4 {
+    padding-left: 1em;
+  }
+</style>
+<div>
+  <p>ID: {{ user.id }}</p>
+  <h4>Compte Spotify:</h4>
+  <p>Spotify id: {{ user.spotify_id }}</p>
+  <p>Spotify name: {{ user.spotify_name }}</p>
+
+  <h4>Compte Discord:</h4>
+  {% if user.discord_id %}
+  <p>Discord id: {{ user.discord_id }}</p>
+  <p>Discord Name: {{ user.discord_name }}</p>
+  <p>Liaison effectuée le: {{ user.created_at }}</p>
+  {% else %}
+  <p>Pour lier un compte Discord, utilisez la commande /register du bot</p>
+  {% endif %}
+</div>
+{% endblock %}
