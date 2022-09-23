@@ -88,5 +88,3 @@ client.on('interactionCreate', async (interaction) => {
 // client.on('channelDelete', async (channel) => {
 //   console.log(channel);
 // });
-
-export default client;
