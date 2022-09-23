@@ -13,7 +13,7 @@
     "lint": "eslint ./src/**/*.ts --config .eslintrc.json --fix",
     "deployCommands": "ts-node ./src/deploy_commands.ts",
     "migrate": "knex migrate:up",
-    "rollback": "knex migrate:rollback",
+    "rollback": "knex migrate:rollback"
   },
   "author": "",
   "license": "MIT",
