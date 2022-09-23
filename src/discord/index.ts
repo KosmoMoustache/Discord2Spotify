@@ -88,3 +88,5 @@ client.on('interactionCreate', async (interaction) => {
 // client.on('channelDelete', async (channel) => {
 //   console.log(channel);
 // });
+
+client.login(process.env.DISCORD_TOKEN);
