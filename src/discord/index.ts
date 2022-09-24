@@ -84,6 +84,10 @@ client.on('interactionCreate', async (interaction) => {
   }
 });
 
+client.on('disconnect', async () => {
+  client.destroy().then(()=>client.login(process.env.DISCORD_TOKEN));
+});
+
 // TODO: compare with channel in db
 // client.on('channelDelete', async (channel) => {
 //   console.log(channel);
