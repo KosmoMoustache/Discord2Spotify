@@ -20,9 +20,7 @@ export async function getMyProfile(token: string): Promise<SpotifyUser> {
   return response;
 }
 
-
-export async function getRegisterLink(uuid: string, updateExpired = true): Promise<TableRegisterLink<'s'> | null> {
-  // TODO: is_expired = true after being used
+export async function getRegisterLink(uuid: string, updateExpired = true): Promise<TableRegisterLink<'s'> | undefined> {
   const dbQuery = await db
     .select<TableRegisterLink<'s'>>('*')
     .from(tn.register_link)
@@ -37,7 +35,6 @@ export async function getRegisterLink(uuid: string, updateExpired = true): Promi
       })
       .from(tn.register_link)
       .where('id', dbQuery.id);
-    return dbQuery;
   }
-  return null;
+  return dbQuery;
 }
