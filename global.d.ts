@@ -8,6 +8,7 @@ declare global {
       MARIADB_ROOT_PASSWORD: string
       MARIADB_DATABASE: string
       MARIADB_HOST: string
+      DISCORD_ID: string
       DISCORD_KEY: string
       DISCORD_TOKEN: string
       SPOTIFY_ID: string
