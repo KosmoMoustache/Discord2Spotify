@@ -33,15 +33,14 @@ router.get('/auth/spotify', async (req, res) => {
   spotify_url.searchParams.set('client_id', process.env.SPOTIFY_ID);
   spotify_url.searchParams.set('scope', scope);
   spotify_url.searchParams.set('show_dialog', 'true');
-  spotify_url.searchParams.set('redirect_uri', redirect_uri);
+  spotify_url.searchParams.set('redirect_uri', REDIRECT_URI);
   spotify_url.searchParams.set('state', state);
 
   res.redirect(spotify_url.toString());
 });
 
 // Callback path
-router.get(authCallbackPath, async (req, res) => {
-  // TODO: check state validity (regex )
+router.get(AUTH_CALLBACK_PATH, async (req, res) => {
   const code = req.query.code as string | null;
   const state = req.query.state as string | null;
 
@@ -53,7 +52,7 @@ router.get(authCallbackPath, async (req, res) => {
     // Request user access token
     const tokenURL = new URL('https://accounts.spotify.com/api/token');
     tokenURL.searchParams.set('code', code as string);
-    tokenURL.searchParams.set('redirect_uri', redirect_uri);
+    tokenURL.searchParams.set('redirect_uri', REDIRECT_URI);
     tokenURL.searchParams.set('grant_type', 'authorization_code');
 
     const tokens: Tokens = await fetch(tokenURL.toString(), {
