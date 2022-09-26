@@ -1,8 +1,13 @@
-import type { RenderPlaylist } from '../interfaces';
+import type { JsonResponse, RenderPlaylist } from '../interfaces';
 import express from 'express';
 import session from 'express-session';
 import consolidate from 'consolidate';
-import { isAuthenticated } from './middleware';
+import morgan from 'morgan';
+import helmet from 'helmet';
+import cors from 'cors';
+import { createWriteStream } from 'fs';
+import { join as pathJoin } from 'path';
+import { isAuthenticated, notFound, errorHandler } from './middleware';
 import User from './User';
 import SpotifyAuth from './authRoutes';
 import logger from '../logger';
@@ -28,6 +33,18 @@ app.set('view engine', 'html');
 app.use(express.static(__dirname + '/public'));
 app.engine('html', consolidate.nunjucks);
 
+if (process.env.NODE_ENV === 'dev') {
+  const accessLogStream = createWriteStream(pathJoin(__dirname, 'access.log'), { flags: 'a' });
+  app.use(morgan('combined', { stream: accessLogStream }));
+} else {
+  app.use(morgan('dev'));
+
+}
+app.use(cors());
+app.use(helmet());
+app.use(notFound);
+app.use(errorHandler);
+
 // Spotify Authentication routes
 app.use(SpotifyAuth);
 
@@ -48,8 +65,6 @@ app.get('/account', isAuthenticated, (req, res) => {
 });
 
 app.get('/playlist', isAuthenticated, async (req, res) => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   const profile = new User(req.session.user.spotify_id);
   profile.setUser(req.session.user);
   const playlists = await profile.fetchMyPlaylists(0, 50);
@@ -68,9 +83,6 @@ app.get('/playlist', isAuthenticated, async (req, res) => {
       selected: (filter) ? filter : undefined
     });
   });
-
-  console.log(render);
-
 
   // TODO: Pagination
   // render.pagination = {
