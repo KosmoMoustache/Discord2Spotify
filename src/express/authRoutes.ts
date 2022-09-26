@@ -8,14 +8,19 @@ import logger from '../logger';
 
 const router = express.Router();
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-router.get('/auth/spotify', (req, res) => {
-  // TODO: check uuid expiration date
+router.get('/auth/spotify', async (req, res) => {
   const uuid = req.query.uuid as string | null;
 
   if (uuid && !regex.uuidv4.test(uuid)) {
     const redirect_url = '/' + '?error=invalid_uuid';
     res.redirect(redirect_url);
+  }
+  if (uuid) {
+    const register_link = await getRegisterLink(uuid, false);
+    if (!register_link) {
+      const redirect_url = '/' + '?error=uuid_not_found';
+      res.redirect(redirect_url);
+    }
   }
 
   const state = `${crypto.randomBytes(16).toString('hex')}${(uuid) ? `#${uuid}` : ''}`;
