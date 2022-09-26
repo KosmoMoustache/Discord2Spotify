@@ -17,7 +17,7 @@ export default <ICommand>{
     .setDMPermission(false)
     .addSubcommand((subcommand) => subcommand
       .setName('get')
-      .setDescription('Returns the channels than the bot scan')
+      .setDescription('Returns the channels that the bot scan')
       .setDescriptionLocalizations({
         fr: 'Retourne les salons que le bot scanne',
         'en-GB': 'Return the channels than the bot scan',

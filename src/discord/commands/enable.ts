@@ -10,7 +10,7 @@ export default <ICommand>{
     .setDescription('Enable the bot to update your playlist from link of this channel')
     // TODO: Better description
     .setDescriptionLocalizations({
-      fr: 'Permettre au bot de mettre a jour votre playlist a partir des liens de ce salon',
+      fr: 'Permettre au bot de mettre à jour votre playlist à partir des liens de ce salon',
       'en-GB': 'Enable the bot to update your playlist from links of this channel'
     }),
   async execute(interaction) {
