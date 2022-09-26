@@ -1,4 +1,4 @@
-import type { TableUser, TableUserChannel } from '../interfaces';
+import type { TableLookupChannel, TableUser, TableUserChannel } from '../interfaces';
 import { Client, GatewayIntentBits } from 'discord.js';
 import { UpdateActivity } from '../utils';
 import Commands from './commands';
@@ -33,7 +33,7 @@ client.on('messageCreate', async (message) => {
       && messageURL.pathname.split('/')[1] === 'track') {
       // TODO: Use a global variable updated after /channel add/delete command instead of db query or create a role that can only access certains channels
       const queryChannel = await db
-        .select<TableUserChannel<'s'>>('*')
+        .select<TableLookupChannel<'s'>>('*')
         .from(tn.lookup_channel)
         .where('channel_id', message.channelId)
         .first();
