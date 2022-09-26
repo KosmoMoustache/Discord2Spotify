@@ -5,6 +5,7 @@ import consolidate from 'consolidate';
 import { isAuthenticated } from './middleware';
 import User from './User';
 import SpotifyAuth from './authRoutes';
+import logger from '../logger';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
@@ -31,14 +32,19 @@ app.engine('html', consolidate.nunjucks);
 app.use(SpotifyAuth);
 
 app.get('/', async (req, res) => {
-  // TODO: add invite link
-  console.log('/ session:', req.session.user);
-
-  res.render('index.html', { user: req.session.user });
+  const render = {
+    user: req.session.user
+  };
+  logger.debug('get /', render);
+  res.render('index.html', render);
 });
 
 app.get('/account', isAuthenticated, (req, res) => {
-  res.render('account.html', { user: req.session.user });
+  const render = {
+    user: req.session.user
+  };
+  logger.debug('get /account', render);
+  res.render('account.html', render);
 });
 
 app.get('/playlist', isAuthenticated, async (req, res) => {
@@ -73,6 +79,7 @@ app.get('/playlist', isAuthenticated, async (req, res) => {
   //   current: playlists.offset,
   // };
 
+  logger.debug('get /playlist: ', render);
   res.render('playlist.html', render);
 });
 
@@ -109,7 +116,12 @@ app.delete('/playlist', isAuthenticated, async (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  res.render('login.html', { user: req.session.user });
+  const render = {
+    user: req.session.user
+  };
+
+  logger.debug('get /login', render);
+  res.render('login.html', render);
 });
 
 app.get('/logout', (req, res, next) => {

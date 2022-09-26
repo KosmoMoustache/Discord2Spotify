@@ -21,7 +21,6 @@ export default <ICommand>{
         .count('id as count')
         .from(tn.lookup_channel)
         .first();
-      console.log(query);
 
       if (query) {
         return query.count as number;

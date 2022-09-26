@@ -8,6 +8,7 @@ import { isSQLError } from '../../utils';
 import moment from 'moment';
 import db from '../../db';
 import tn from '../../constants';
+import logger from '../../logger';
 
 // TODO: delete subcommand
 export default <ICommand>{
@@ -60,7 +61,7 @@ export default <ICommand>{
             await interaction.reply('Ce salon est déjà enregistré');
           } else {
             // TODO: Report error
-            console.error(error);
+            logger.error(error);
             await interaction.reply(tn.message.dbError);
           }
         }
@@ -96,7 +97,7 @@ export default <ICommand>{
       } break;
       default: {
         // TODO: Report error
-        console.error(interaction);
+        logger.error(interaction);
       } break;
     }
   },

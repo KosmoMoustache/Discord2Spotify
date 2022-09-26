@@ -2,6 +2,7 @@ import { SlashCommandBuilder } from 'discord.js';
 import type { TableUser, TablePlaylist, TableUserChannel, ICommand } from '../../interfaces';
 import db from '../../db';
 import tn from '../../constants';
+import logger from '../../logger';
 
 export default <ICommand>{
   data: new SlashCommandBuilder()
@@ -62,7 +63,7 @@ export default <ICommand>{
         }
       } catch (error) {
         // TODO: Report incident
-        console.error(error);
+        logger.error(error);
         interaction.reply(tn.message.dbError);
       }
     } else {

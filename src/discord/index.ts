@@ -5,6 +5,7 @@ import Commands from './commands';
 import tn from '../constants';
 import User from '../express/User';
 import db from '../db';
+import logger from '../logger';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
@@ -21,7 +22,7 @@ const client = new Client({
 });
 
 client.once('ready', async () => {
-  console.log(`Logged in as ${client.user?.tag}`);
+  logger.info(`Logged in as ${client.user?.tag}`);
   UpdateActivity(client, '📀');
 });
 
@@ -76,7 +77,7 @@ client.on('interactionCreate', async (interaction) => {
     command.execute(interaction);
   } catch (error) {
     // TODO: Report error
-    console.error(error);
+    logger.error(error);
     await interaction.reply({
       content: 'There was an error while executing this command!',
       ephemeral: true,
@@ -85,7 +86,7 @@ client.on('interactionCreate', async (interaction) => {
 });
 
 client.on('disconnect', async () => {
-  client.destroy().then(()=>client.login(process.env.DISCORD_TOKEN));
+  logger.warn('Bot disconnected!');
 });
 
 // TODO: compare with channel in db

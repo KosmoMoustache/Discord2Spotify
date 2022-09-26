@@ -4,6 +4,7 @@ import crypto from 'crypto';
 import { AUTH_CALLBACK_PATH, REDIRECT_URI, regex } from '../constants';
 import { getMyProfile, getRegisterLink, getServerBearerToken } from './SpotifyUtils';
 import User from './User';
+import logger from '../logger';
 
 const router = express.Router();
 
@@ -69,6 +70,7 @@ router.get(authCallbackPath, async (req, res) => {
       if (register) await profile.linkDiscord(register);
     }
 
+    logger.debug(`get ${AUTH_CALLBACK_PATH}`, profile);
     req.session.user = profile;
     res.redirect('/');
   }
