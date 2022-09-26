@@ -31,13 +31,15 @@ client.on('messageCreate', async (message) => {
   if (message.content.match(RegexURL)) {
     const messageURL = new URL(message.content);
     if (messageURL.host === 'open.spotify.com'
-      && messageURL.pathname.split('/')[1] === 'track') {
+      && messageURL.pathname.split('/')[1] === 'track'
+    ) {
       // TODO: Use a global variable updated after /channel add/delete command instead of db query or create a role that can only access certains channels
       const queryChannel = await db
         .select<TableLookupChannel<'s'>>('*')
         .from(tn.lookup_channel)
         .where('channel_id', message.channelId)
         .first();
+
       if (queryChannel) {
         // TODO: Optimization reuse the query made 11 line above
         const registeredUsers = await db
