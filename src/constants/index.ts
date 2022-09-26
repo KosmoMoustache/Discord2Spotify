@@ -21,8 +21,7 @@ export const regex = {
 
 // projectName: ['addToSpotify', 'Discord2Spotify', 'Playsica', 'Cobot', 'Dotify']
 
-// TODO: Uppercase
-export const authCallbackPath = '/auth/spotify/callback';
-export const redirect_uri = (process.env.NODE_ENV === 'production')
-  ? 'https://spotify.kosmo.ovh' + authCallbackPath
-  : 'http://localhost:' + process.env.EXPRESS_PORT + authCallbackPath;
+export const AUTH_CALLBACK_PATH = '/auth/spotify/callback';
+export const REDIRECT_URI = (process.env.NODE_ENV === 'production')
+  ? 'https://spotify.kosmo.ovh' + AUTH_CALLBACK_PATH
+  : 'http://localhost:' + process.env.EXPRESS_PORT + AUTH_CALLBACK_PATH;

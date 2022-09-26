@@ -1,7 +1,7 @@
 import type { Tokens } from '../interfaces';
 import express from 'express';
 import crypto from 'crypto';
-import { authCallbackPath, redirect_uri, regex } from '../constants';
+import { AUTH_CALLBACK_PATH, REDIRECT_URI, regex } from '../constants';
 import { getMyProfile, getRegisterLink, getServerBearerToken } from './SpotifyUtils';
 import User from './User';
 
