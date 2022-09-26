@@ -14,3 +14,7 @@ export interface RenderPlaylist {
 export interface EPlaylist extends Playlist {
   selected?: TablePlaylist
 }
+
+export interface JsonResponse extends Record<string, unknown> {
+  message: string
+}

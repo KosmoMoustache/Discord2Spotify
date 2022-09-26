@@ -80,9 +80,15 @@ app.post('/playlist', isAuthenticated, async (req, res) => {
   const { id } = req.body;
   if (id) {
     await new User(req.session.user.spotify_id).setUser(req.session.user).addUserPlaylist(id);
-    res.send('OK');
+    res.json(<JsonResponse>{
+      'message': 'OK',
+      id: id,
+    });
   } else {
-    res.send('Invalid ID');
+    res.json(<JsonResponse>{
+      message: 'Invalid ID',
+      id: id,
+    });
   }
 });
 
@@ -90,9 +96,15 @@ app.delete('/playlist', isAuthenticated, async (req, res) => {
   const { id } = req.body;
   if (id) {
     await new User(req.session.user.spotify_id).setUser(req.session.user).deleteUserPlaylist(id);
-    res.send('OK');
+    res.json(<JsonResponse>{
+      'message': 'OK',
+      id: id,
+    });
   } else {
-    res.send('Invalid ID');
+    res.json(<JsonResponse>{
+      message: 'Invalid ID',
+      id: id,
+    });
   }
 });
 
