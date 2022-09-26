@@ -41,14 +41,12 @@ client.on('messageCreate', async (message) => {
         .first();
 
       if (queryChannel) {
-        // TODO: Optimization reuse the query made 11 line above
         const registeredUsers = await db
           .select<TableUserChannel<'s'>[]>('*')
           .from(tn.user_channel)
           .where('channel_id', message.channelId);
 
         if (registeredUsers) {
-          console.log(registeredUsers);
           registeredUsers.forEach(async (user) => {
             const userDb: TableUser<'s'> = await db
               .select('*')
@@ -93,9 +91,13 @@ client.on('disconnect', async () => {
   logger.warn('Bot disconnected!');
 });
 
-// TODO: compare with channel in db
-// client.on('channelDelete', async (channel) => {
-//   console.log(channel);
-// });
+client.on('channelDelete', async (channel) => {
+  const dbQuery = await db
+    .del()
+    .from(tn.lookup_channel)
+    .where('channel_id', channel.id);
+  if (dbQuery) logger.info(`channel: ${channel.id} deleted: ${dbQuery}`);
+  // TODO: Remove entry of user_channel as well
+});
 
 client.login(process.env.DISCORD_TOKEN);
