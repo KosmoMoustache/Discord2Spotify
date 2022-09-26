@@ -86,6 +86,8 @@ client.on('interactionCreate', async (interaction) => {
 });
 
 client.on('disconnect', async () => {
+  client.destroy();
+  client.login(process.env.DISCORD_TOKEN);
   logger.warn('Bot disconnected!');
 });
 
