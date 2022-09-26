@@ -1,4 +1,4 @@
-import User from '../../express/User';
+import User from '../express/User';
 import { Playlist, TablePlaylist } from '.';
 
 export interface RenderPlaylist {
