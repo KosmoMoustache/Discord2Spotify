@@ -64,7 +64,7 @@ router.get(AUTH_CALLBACK_PATH, async (req, res) => {
     }).then(resp => resp.json());
 
     const currentProfile = await getMyProfile(tokens.access_token);
-    const profile = await new User(currentProfile.id, currentProfile);
+    const profile = new User(currentProfile.id, currentProfile);
     await profile.updateUser();
     await profile.getUser();
     await profile.updateToken(tokens);
@@ -76,7 +76,7 @@ router.get(AUTH_CALLBACK_PATH, async (req, res) => {
 
     logger.debug(`get ${AUTH_CALLBACK_PATH}`, profile);
     req.session.user = profile;
-    res.redirect('/');
+    res.redirect('/?connected');
   }
 });
 
