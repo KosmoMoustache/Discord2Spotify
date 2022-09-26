@@ -10,7 +10,6 @@ import db from '../../db';
 import tn from '../../constants';
 import logger from '../../logger';
 
-// TODO: delete subcommand
 export default <ICommand>{
   data: new SlashCommandBuilder()
     .setName('channel')
@@ -38,6 +37,24 @@ export default <ICommand>{
         .setDescriptionLocalizations({
           fr: 'Salon à scanner',
           'en-GB': 'Channel to scan',
+        })
+        .addChannelTypes(ChannelType.GuildText)
+      )
+    )
+    .addSubcommand((subcommand) => subcommand
+      .setName('delete')
+      .setDescription('Remove channel from the bot\'s list ')
+      .setDescriptionLocalizations({
+        fr: 'Supprime un salon de la liste du bot',
+        'en-GB': 'Remove a channel from the bot\'s list',
+      })
+      .addChannelOption((p) => p
+        .setName('channel')
+        .setRequired(true)
+        .setDescription('Channel to delete')
+        .setDescriptionLocalizations({
+          fr: 'Salon à supprimer',
+          'en-GB': 'Channel to delete',
         })
         .addChannelTypes(ChannelType.GuildText)
       )
@@ -73,8 +90,6 @@ export default <ICommand>{
           .where('guild_id', interaction.guildId)
           .limit(26);
 
-        console.debug('/channel get:', dbQuery);
-
         if (dbQuery.length > 0) {
           const embed = new EmbedBuilder();
           embed
@@ -94,6 +109,15 @@ export default <ICommand>{
         } else {
           interaction.reply('Aucun salon est en écoute sur ce serveur, pour en ajouter utilisez la commande `/channel add` suivis d\'un salon');
         }
+      } break;
+      case 'delete': {
+        const command_options = interaction.options.get('channel', true);
+        await db
+          .del()
+          .from(tn.lookup_channel)
+          .where('channel_id', command_options.channel);
+
+        interaction.reply('Salon supprimé!');
       } break;
       default: {
         // TODO: Report error
