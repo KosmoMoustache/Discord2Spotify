@@ -40,6 +40,7 @@ if (process.env.NODE_ENV === 'dev') {
   app.use(morgan('dev'));
 
 }
+
 app.use(cors({
   methods: 'GET',
   origin: [/\.scdn\.co$/]
