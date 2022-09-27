@@ -48,7 +48,7 @@ app.use(errorHandler);
 // Spotify Authentication routes
 app.use(SpotifyAuth);
 
-app.get('/', async (req, res) => {
+app.get('/', (req, res) => {
   const render = {
     user: req.session.user
   };
