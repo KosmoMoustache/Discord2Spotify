@@ -10,14 +10,13 @@ export function getServerBearerToken(): string {
 * @description https://developer.spotify.com/documentation/web-api/reference/#/operations/get-current-users-profile
 */
 export async function getMyProfile(token: string): Promise<SpotifyUser> {
-  const response = await fetch('https://api.spotify.com/v1/me', {
+  return await fetch('https://api.spotify.com/v1/me', {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     }
   }).then(res => res.json());
-  return response;
 }
 
 
