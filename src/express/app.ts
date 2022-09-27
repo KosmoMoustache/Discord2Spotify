@@ -4,7 +4,6 @@ import session from 'express-session';
 import consolidate from 'consolidate';
 import morgan from 'morgan';
 import helmet from 'helmet';
-import cors from 'cors';
 import { createWriteStream } from 'fs';
 import { join as pathJoin } from 'path';
 import { isAuthenticated, notFound, errorHandler } from './middleware';
@@ -41,10 +40,6 @@ if (process.env.NODE_ENV === 'dev') {
 
 }
 
-app.use(cors({
-  methods: 'GET',
-  origin: [/\.scdn\.co$/]
-}));
 app.use(helmet());
 
 // Spotify Authentication routes
