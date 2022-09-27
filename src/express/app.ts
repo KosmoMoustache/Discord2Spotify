@@ -3,7 +3,6 @@ import express from 'express';
 import session from 'express-session';
 import consolidate from 'consolidate';
 import morgan from 'morgan';
-import helmet from 'helmet';
 import { createWriteStream } from 'fs';
 import { join as pathJoin } from 'path';
 import { isAuthenticated, notFound, errorHandler } from './middleware';
@@ -39,8 +38,6 @@ if (process.env.NODE_ENV === 'dev') {
   app.use(morgan('dev'));
 
 }
-
-app.use(helmet());
 
 // Spotify Authentication routes
 app.use(SpotifyAuth);
