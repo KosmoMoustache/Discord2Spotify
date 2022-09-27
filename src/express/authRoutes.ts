@@ -1,20 +1,26 @@
 import type { Tokens } from '../interfaces';
 import express from 'express';
 import crypto from 'crypto';
-import { authCallbackPath, redirect_uri, regex } from '../constants';
+import { AUTH_CALLBACK_PATH, REDIRECT_URI, regex } from '../constants';
 import { getMyProfile, getRegisterLink, getServerBearerToken } from './SpotifyUtils';
 import User from './User';
+import logger from '../logger';
 
 const router = express.Router();
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-router.get('/auth/spotify', (req, res) => {
-  // TODO: check uuid expiration date
+router.get('/auth/spotify', async (req, res) => {
   const uuid = req.query.uuid as string | null;
 
   if (uuid && !regex.uuidv4.test(uuid)) {
     const redirect_url = '/' + '?error=invalid_uuid';
     res.redirect(redirect_url);
+  }
+  if (uuid) {
+    const register_link = await getRegisterLink(uuid, false);
+    if (!register_link) {
+      const redirect_url = '/' + '?error=uuid_not_found';
+      res.redirect(redirect_url);
+    }
   }
 
   const state = `${crypto.randomBytes(16).toString('hex')}${(uuid) ? `#${uuid}` : ''}`;
@@ -27,15 +33,14 @@ router.get('/auth/spotify', (req, res) => {
   spotify_url.searchParams.set('client_id', process.env.SPOTIFY_ID);
   spotify_url.searchParams.set('scope', scope);
   spotify_url.searchParams.set('show_dialog', 'true');
-  spotify_url.searchParams.set('redirect_uri', redirect_uri);
+  spotify_url.searchParams.set('redirect_uri', REDIRECT_URI);
   spotify_url.searchParams.set('state', state);
 
   res.redirect(spotify_url.toString());
 });
 
 // Callback path
-router.get(authCallbackPath, async (req, res) => {
-  // TODO: check state validity (regex )
+router.get(AUTH_CALLBACK_PATH, async (req, res) => {
   const code = req.query.code as string | null;
   const state = req.query.state as string | null;
 
@@ -47,7 +52,7 @@ router.get(authCallbackPath, async (req, res) => {
     // Request user access token
     const tokenURL = new URL('https://accounts.spotify.com/api/token');
     tokenURL.searchParams.set('code', code as string);
-    tokenURL.searchParams.set('redirect_uri', redirect_uri);
+    tokenURL.searchParams.set('redirect_uri', REDIRECT_URI);
     tokenURL.searchParams.set('grant_type', 'authorization_code');
 
     const tokens: Tokens = await fetch(tokenURL.toString(), {
@@ -59,7 +64,7 @@ router.get(authCallbackPath, async (req, res) => {
     }).then(resp => resp.json());
 
     const currentProfile = await getMyProfile(tokens.access_token);
-    const profile = await new User(currentProfile.id, currentProfile);
+    const profile = new User(currentProfile.id, currentProfile);
     await profile.updateUser();
     await profile.getUser();
     await profile.updateToken(tokens);
@@ -69,8 +74,9 @@ router.get(authCallbackPath, async (req, res) => {
       if (register) await profile.linkDiscord(register);
     }
 
+    logger.debug(`get ${AUTH_CALLBACK_PATH}`, profile);
     req.session.user = profile;
-    res.redirect('/');
+    res.redirect('/?connected');
   }
 });
 

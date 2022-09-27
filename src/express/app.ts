@@ -1,10 +1,16 @@
-import type { RenderPlaylist } from '../interfaces';
+import type { JsonResponse, RenderPlaylist } from '../interfaces';
 import express from 'express';
 import session from 'express-session';
 import consolidate from 'consolidate';
-import { isAuthenticated } from './middleware';
+import morgan from 'morgan';
+import helmet from 'helmet';
+import cors from 'cors';
+import { createWriteStream } from 'fs';
+import { join as pathJoin } from 'path';
+import { isAuthenticated, notFound, errorHandler } from './middleware';
 import User from './User';
 import SpotifyAuth from './authRoutes';
+import logger from '../logger';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
@@ -27,23 +33,39 @@ app.set('view engine', 'html');
 app.use(express.static(__dirname + '/public'));
 app.engine('html', consolidate.nunjucks);
 
+if (process.env.NODE_ENV === 'dev') {
+  const accessLogStream = createWriteStream(pathJoin(__dirname, 'access.log'), { flags: 'a' });
+  app.use(morgan('combined', { stream: accessLogStream }));
+} else {
+  app.use(morgan('dev'));
+
+}
+app.use(cors({
+  methods: 'GET',
+  origin: ['/\.scdn\.co$/']
+}));
+app.use(helmet());
+
 // Spotify Authentication routes
 app.use(SpotifyAuth);
 
-app.get('/', async (req, res) => {
-  // TODO: add invite link
-  console.log('/ session:', req.session.user);
-
-  res.render('index.html', { user: req.session.user });
+app.get('/', (req, res) => {
+  const render = {
+    user: req.session.user
+  };
+  logger.debug('get /', render);
+  res.render('index.html', render);
 });
 
 app.get('/account', isAuthenticated, (req, res) => {
-  res.render('account.html', { user: req.session.user });
+  const render = {
+    user: req.session.user
+  };
+  logger.debug('get /account', render);
+  res.render('account.html', render);
 });
 
 app.get('/playlist', isAuthenticated, async (req, res) => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   const profile = new User(req.session.user.spotify_id);
   profile.setUser(req.session.user);
   const playlists = await profile.fetchMyPlaylists(0, 50);
@@ -63,9 +85,6 @@ app.get('/playlist', isAuthenticated, async (req, res) => {
     });
   });
 
-  console.log(render);
-
-
   // TODO: Pagination
   // render.pagination = {
   //   next: playlists.next,
@@ -73,6 +92,7 @@ app.get('/playlist', isAuthenticated, async (req, res) => {
   //   current: playlists.offset,
   // };
 
+  logger.debug('get /playlist: ', render);
   res.render('playlist.html', render);
 });
 
@@ -80,9 +100,15 @@ app.post('/playlist', isAuthenticated, async (req, res) => {
   const { id } = req.body;
   if (id) {
     await new User(req.session.user.spotify_id).setUser(req.session.user).addUserPlaylist(id);
-    res.send('OK');
+    res.json(<JsonResponse>{
+      'message': 'OK',
+      id: id,
+    });
   } else {
-    res.send('Invalid ID');
+    res.json(<JsonResponse>{
+      message: 'Invalid ID',
+      id: id,
+    });
   }
 });
 
@@ -90,14 +116,25 @@ app.delete('/playlist', isAuthenticated, async (req, res) => {
   const { id } = req.body;
   if (id) {
     await new User(req.session.user.spotify_id).setUser(req.session.user).deleteUserPlaylist(id);
-    res.send('OK');
+    res.json(<JsonResponse>{
+      'message': 'OK',
+      id: id,
+    });
   } else {
-    res.send('Invalid ID');
+    res.json(<JsonResponse>{
+      message: 'Invalid ID',
+      id: id,
+    });
   }
 });
 
 app.get('/login', (req, res) => {
-  res.render('login.html', { user: req.session.user });
+  const render = {
+    user: req.session.user
+  };
+
+  logger.debug('get /login', render);
+  res.render('login.html', render);
 });
 
 app.get('/logout', (req, res, next) => {
@@ -116,5 +153,8 @@ app.get('/logout', (req, res, next) => {
     });
   });
 });
+
+app.use(notFound);
+app.use(errorHandler);
 
 export default app;

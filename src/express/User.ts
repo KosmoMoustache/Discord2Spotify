@@ -5,6 +5,7 @@ import type {
 import { getServerBearerToken } from './SpotifyUtils';
 import tn from '../constants';
 import db from '../db';
+import logger from '../logger';
 
 export interface IClassUser /* extends Omit<TableUser, 'deleted_at'> */ {
   id?: number;
@@ -43,7 +44,6 @@ export default class User implements IClassUser {
       .from(tn.user)
       .where('spotify_id', spotify_id)
       .first();
-    console.log(dbQuery);
 
     Object.assign(this, dbQuery);
     return this;
@@ -155,15 +155,12 @@ export default class User implements IClassUser {
       .orderBy('id', 'desc')
       .first();
 
-    console.log(db_tokens);
-
-
     const current_date = new Date().getTime();
     const token_date = new Date(db_tokens.created_at).getTime() + (db_tokens.expires_in * 1000);
 
     // Token is expired
     if (token_date < current_date) {
-      console.debug('Token is expired', new Date(token_date), new Date(current_date));
+      logger.debug('Token is expired', new Date(token_date), new Date(current_date));
       const newToken = await this.refreshToken(db_tokens.refresh_token);
       this.updateToken(newToken);
       return newToken;

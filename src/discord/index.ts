@@ -1,10 +1,11 @@
-import type { TableUser, TableUserChannel } from '../interfaces';
+import type { TableLookupChannel, TableUser, TableUserChannel } from '../interfaces';
 import { Client, GatewayIntentBits } from 'discord.js';
 import { UpdateActivity } from '../utils';
 import Commands from './commands';
 import tn from '../constants';
 import User from '../express/User';
 import db from '../db';
+import logger from '../logger';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
@@ -21,7 +22,7 @@ const client = new Client({
 });
 
 client.once('ready', async () => {
-  console.log(`Logged in as ${client.user?.tag}`);
+  logger.info(`Logged in as ${client.user?.tag}`);
   UpdateActivity(client, '📀');
 });
 
@@ -30,22 +31,22 @@ client.on('messageCreate', async (message) => {
   if (message.content.match(RegexURL)) {
     const messageURL = new URL(message.content);
     if (messageURL.host === 'open.spotify.com'
-      && messageURL.pathname.split('/')[1] === 'track') {
+      && messageURL.pathname.split('/')[1] === 'track'
+    ) {
       // TODO: Use a global variable updated after /channel add/delete command instead of db query or create a role that can only access certains channels
       const queryChannel = await db
-        .select<TableUserChannel<'s'>>('*')
+        .select<TableLookupChannel<'s'>>('*')
         .from(tn.lookup_channel)
         .where('channel_id', message.channelId)
         .first();
+
       if (queryChannel) {
-        // TODO: Optimization reuse the query made 11 line above
         const registeredUsers = await db
           .select<TableUserChannel<'s'>[]>('*')
           .from(tn.user_channel)
           .where('channel_id', message.channelId);
 
         if (registeredUsers) {
-          console.log(registeredUsers);
           registeredUsers.forEach(async (user) => {
             const userDb: TableUser<'s'> = await db
               .select('*')
@@ -76,7 +77,7 @@ client.on('interactionCreate', async (interaction) => {
     command.execute(interaction);
   } catch (error) {
     // TODO: Report error
-    console.error(error);
+    logger.error(error);
     await interaction.reply({
       content: 'There was an error while executing this command!',
       ephemeral: true,
@@ -84,9 +85,19 @@ client.on('interactionCreate', async (interaction) => {
   }
 });
 
-// TODO: compare with channel in db
-// client.on('channelDelete', async (channel) => {
-//   console.log(channel);
-// });
+client.on('disconnect', async () => {
+  client.destroy();
+  client.login(process.env.DISCORD_TOKEN);
+  logger.warn('Bot disconnected!');
+});
 
-export default client;
+client.on('channelDelete', async (channel) => {
+  const dbQuery = await db
+    .del()
+    .from(tn.lookup_channel)
+    .where('channel_id', channel.id);
+  if (dbQuery) logger.info(`channel: ${channel.id} deleted: ${dbQuery}`);
+  // TODO: Remove entry of user_channel as well
+});
+
+client.login(process.env.DISCORD_TOKEN);
