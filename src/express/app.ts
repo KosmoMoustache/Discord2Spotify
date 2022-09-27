@@ -42,8 +42,6 @@ if (process.env.NODE_ENV === 'dev') {
 }
 app.use(cors());
 app.use(helmet());
-app.use(notFound);
-app.use(errorHandler);
 
 // Spotify Authentication routes
 app.use(SpotifyAuth);
@@ -152,5 +150,8 @@ app.get('/logout', (req, res, next) => {
     });
   });
 });
+
+app.use(notFound);
+app.use(errorHandler);
 
 export default app;
