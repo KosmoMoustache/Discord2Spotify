@@ -1,15 +1,3 @@
-TODO:
-- Dockerfile
-- [ ] Refaire le lien d'invitation
-  - [ ] Permission (2147493952)
-- [ ] Dockerfile
-- [ ] Refaire l'interface du site, (FrameworkJS ou Tailwindcss ?)
-- [ ] Command /channel delete
-- [ ] i18n
-- [ ] TODO dans le code 
-- [ ] Reporte les erreurs + logger dans action_history
-- [ ] Cacher les requêtes vers l'API de spotify
-
 https://discord.com/api/oauth2/authorize?client_id=1017722603261136896&permissions=156766579776&redirect_uri=https%3A%2F%2Fspotify.kosmo.ovh&response_type=code&scope=email%20identify%20bot%20applications.commands
 https://discord.com/api/oauth2/authorize?client_id=1017722603261136896&redirect_uri=https%3A%2F%2Fspotify.kosmo.ovh&response_type=code&scope=email%20identify
 
