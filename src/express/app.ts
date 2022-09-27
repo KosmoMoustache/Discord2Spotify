@@ -40,7 +40,10 @@ if (process.env.NODE_ENV === 'dev') {
   app.use(morgan('dev'));
 
 }
-app.use(cors());
+app.use(cors({
+  methods: 'GET',
+  origin: ['/\.scdn\.co$/']
+}));
 app.use(helmet());
 
 // Spotify Authentication routes
