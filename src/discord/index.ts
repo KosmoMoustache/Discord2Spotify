@@ -11,6 +11,7 @@ import logger from '../logger';
 require('dotenv').config();
 
 const client = new Client({
+  closeTimeout: 300000, // 5min
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
