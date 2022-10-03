@@ -85,11 +85,18 @@ client.on('interactionCreate', async (interaction) => {
   }
 });
 
-client.on('disconnect', async () => {
-  client.destroy();
-  client.login(process.env.DISCORD_TOKEN);
-  logger.warn('Bot disconnected!');
+client.on('shardDisconnect', async (event) => {
+  setTimeout(() => {
+    client.destroy();
+    client.login(process.env.DISCORD_TOKEN);
+  }, 300000); // 5min
+  logger.warn('Bot disconnected!', event);
 });
+
+client.on('shardError', async (error) => { logger.warn('Bot error:', error); });
+client.on('shardReconnecting', async (event) => { logger.warn('Shard reconnecting!', event); });
+client.on('shardResume', async (event) => { logger.warn('Shard resuming!', event); });
+client.on('shardReady', async (event) => { logger.warn('Shard ready!', event); });
 
 client.on('channelDelete', async (channel) => {
   const dbQuery = await db
