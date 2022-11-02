@@ -28,45 +28,54 @@ client.once('ready', async () => {
 });
 
 client.on('messageCreate', async (message) => {
-  const RegexURL = new RegExp(/[-a-zA-Z0-9@:%_+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_+.~#?&//=]*)?/);
+  const RegexURL = new RegExp(
+    /[-a-zA-Z0-9@:%_+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_+.~#?&//=]*)?/g
+  );
   if (message.content.match(RegexURL)) {
-    const messageURL = new URL(message.content);
-    if (messageURL.host === 'open.spotify.com'
-      && messageURL.pathname.split('/')[1] === 'track'
-    ) {
-      // TODO: Use a global variable updated after /channel add/delete command instead of db query or create a role that can only access certains channels
-      const queryChannel = await db
-        .select<TableLookupChannel<'s'>>('*')
-        .from(tn.lookup_channel)
-        .where('channel_id', message.channelId)
-        .first();
+    try {
+      const messageURL = new URL(message.content);
+      if (
+        messageURL.host === 'open.spotify.com' &&
+        messageURL.pathname.split('/')[1] === 'track'
+      ) {
+        // TODO: Use a global variable updated after /channel add/delete command instead of db query or create a role that can only access certains channels
+        const queryChannel = await db
+          .select<TableLookupChannel<'s'>>('*')
+          .from(tn.lookup_channel)
+          .where('channel_id', message.channelId)
+          .first();
 
-      if (queryChannel) {
-        const registeredUsers = await db
-          .select<TableUserChannel<'s'>[]>('*')
-          .from(tn.user_channel)
-          .where('channel_id', message.channelId);
+        if (queryChannel) {
+          const registeredUsers = await db
+            .select<TableUserChannel<'s'>[]>('*')
+            .from(tn.user_channel)
+            .where('channel_id', message.channelId);
 
-        if (registeredUsers) {
-          registeredUsers.forEach(async (user) => {
-            const userDb: TableUser<'s'> = await db
-              .select('*')
-              .from(tn.user)
-              .where('id', user.user_id)
-              .first();
+          if (registeredUsers) {
+            registeredUsers.forEach(async (user) => {
+              const userDb: TableUser<'s'> = await db
+                .select('*')
+                .from(tn.user)
+                .where('id', user.user_id)
+                .first();
 
-            const profile = new User(userDb.spotify_id);
-            await profile.getUser();
+              const profile = new User(userDb.spotify_id);
+              await profile.getUser();
 
-            // TODO: Configurer les playlists -> channel discord sur le site
-            const user_playlist = (await profile.getUserPlaylist())[0];
+              // TODO: Configurer les playlists -> channel discord sur le site
+              const user_playlist = (await profile.getUserPlaylist())[0];
 
-            // TODO: Create SpotifyURI parser
-            await profile.addItemsToPlaylist(user_playlist.playlist_id, [`spotify:track:${messageURL.pathname.split('/track/')[1]}`]);
-          });
-          message.react('👍');
+              // TODO: Create SpotifyURI parser
+              await profile.addItemsToPlaylist(user_playlist.playlist_id, [
+                `spotify:track:${messageURL.pathname.split('/track/')[1]}`,
+              ]);
+            });
+            message.react('👍');
+          }
         }
       }
+    } catch (error) {
+      // not valid url
     }
   }
 });
