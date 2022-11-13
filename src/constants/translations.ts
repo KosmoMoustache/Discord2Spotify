@@ -11,19 +11,67 @@ export default <ITranslations>{
   'en-GB': {
     localName: 'English - GB',
     message: {
-      dbError: 'Error when saving into the database',
+      dbError:
+        'Error when connecting to the database. If the problem persists please file an issue on Github (https://s.kosmo.ovh/dotify)',
       alreadySave: 'This channel is already saved',
       commandError: 'There was an error while executing this command',
       rateLimited: 'Please wait: %s until next use of that command',
     },
     commands: {
-      ping: 'Pong! - EN',
-      local: { reply: 'Updated guild preferred language to %s' },
+      channel: {
+        get: {
+          embed: {
+            title: 'Channel%s scanned on the server %s',
+            limited: '(Response limited to 25 channels)',
+            description: 'added the, by',
+            fields: '%s by %s',
+          },
+          reply:
+            'No channel is listening on this server, to add one use the command `/channel add` followed by a channel name',
+        },
+        add: {
+          reply: 'Channel %s added!',
+        },
+        delete: {
+          reply: 'Channel %s deleted!',
+        },
+      },
+      enable: {
+        deleted: 'This channel will no longer update your Playlist!',
+        saved: 'Channel added!',
+        savedNoPlaylist:
+          "Channel added! But you haven't configured a playlist on the site: %s/playlist",
+        notFound:
+          'User not found. Please register first by typing the command `/register`.',
+      },
+      locale: {
+        replySet: 'Preferred locale updated to %s',
+        replyGet: 'Preferred locale: %s',
+      },
       read: {
         done: 'Done!',
-        invalidId: 'Invalid message id',
-        notTextBased: 'This channel is not text based',
+        ok: 'Ok',
+        invalidId: 'Wrong message Id',
+        notTextBased: 'The channel is not text based',
       },
+      register: {
+        checkDM: 'Look your DM',
+        embed: {
+          title:
+            'Use this link to link your Spotify account to %s (Link valid for 1 hour)',
+        },
+      },
+      stats: {
+        title: "Bot's statistics",
+        ping: 'Ping',
+        uptime: 'Running time',
+        memory: 'Memory',
+        servers: 'Servers',
+        playlistsUpdated: 'Updated playlist',
+        channelScanned: 'Listened channels',
+        version: 'Version',
+      },
+      ping: 'Pong! - EN',
     },
   },
   fr: {
@@ -31,7 +79,7 @@ export default <ITranslations>{
     message: {
       dbError:
         // TODO: Ajouter le lien vers github
-        "Erreur lors de la connexion à base de donnée (Si l'incident persiste merci d'ajouter un issue sur Github)",
+        "Erreur lors de la connexion à base de donnée. Si l'incident persiste merci d'ajouter un ticker sur Github (https://s.kosmo.ovh/dotify)",
       alreadySave: 'Ce salon est déjà enregistré',
       commandError: "Une erreur est survenu lors de l'execution de la commande",
       rateLimited:
@@ -44,10 +92,10 @@ export default <ITranslations>{
             title: 'Salon%s en écoute sur ce serveur %s',
             limited: '(Réponse limité à 25 salons)',
             description: 'ajouté le, par',
+            fields: '%s par %s',
           },
-
           reply:
-            "Aucun salon est en écoute sur ce serveur, pour en ajouter utilisez la commande `/channel add` suivis d'un salon",
+            "Aucun salon est en écoute sur ce serveur, pour en ajouter utilisez la commande `/channel add` suivis d'un nom de salon.",
         },
         add: {
           reply: 'Salon %s ajouté!',
@@ -62,7 +110,7 @@ export default <ITranslations>{
         savedNoPlaylist:
           "Salon ajouté! Mais vous n'avez pas configuré de playlist sur le site: %s/playlist",
         notFound:
-          'Utilisateur introuvable. Merci de vous enregistrer au préalable en tapant la command `/register`',
+          'Utilisateur introuvable. Merci de vous enregistrer au préalable en tapant la command `/register`.',
       },
       locale: {
         replySet: 'Mise à jour de la langue préférée du serveur vers %s',
