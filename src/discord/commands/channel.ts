@@ -130,9 +130,10 @@ export default <ICommand>{
             dbQuery.slice(0, 25).forEach(async (channel) => {
               channels.push({
                 name: moment(channel.created_at).format('MM-DD-YYYY'),
-                value: `${channelMention(channel.channel_id)} par ${userMention(
-                  String(channel.discord_id)
-                )} `,
+                value: tr.t('get.embed.fields', [
+                  channelMention(channel.channel_id),
+                  userMention(String(channel.discord_id)),
+                ]),
               });
             });
             embed.addFields(channels);
