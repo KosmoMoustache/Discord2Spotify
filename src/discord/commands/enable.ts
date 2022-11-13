@@ -1,20 +1,26 @@
 import { SlashCommandBuilder } from 'discord.js';
-import type { TableUser, TablePlaylist, TableUserChannel, ICommand } from '../../interfaces';
-import db from '../../db';
-import tn from '../../constants';
+import type {
+  TableUser,
+  TablePlaylist,
+  TableUserChannel,
+  ICommand,
+} from '../../interfaces';
+import tn, { commandsName } from '../../constants';
+import i18n from '../../constants/i18n';
 import logger from '../../logger';
+import db from '../../db';
 
 export default <ICommand>{
   data: new SlashCommandBuilder()
-    .setName('enable')
+    .setName(commandsName.ENABLE)
     .setDMPermission(false)
-    .setDescription('Enable the bot to update your playlist from link of this channel')
-    // TODO: Better description
+    .setDescription("Allow this channel to the update your Spotify's Playlist")
     .setDescriptionLocalizations({
-      fr: 'Permettre au bot de mettre à jour votre playlist à partir des liens de ce salon',
-      'en-GB': 'Enable the bot to update your playlist from links of this channel'
+      fr: 'Permettre à ce salon de mettre à jour de votre Playlist Spotify',
     }),
   async execute(interaction) {
+    const tr = new i18n(interaction, 'commands.enable');
+
     const UserDB = await db
       .select<TableUser<'select'>>('id')
       .from(tn.user)
@@ -23,6 +29,7 @@ export default <ICommand>{
 
     if (UserDB) {
       try {
+        // Knowing if the channel is already enable, in that case we need to disabling it
         const countChannel = await db
           .count('id as count')
           .where('discord_id', interaction.user.id)
@@ -31,6 +38,7 @@ export default <ICommand>{
           .first();
 
         if (countChannel && countChannel.count > 1) {
+          // Channel if found id db
           // Delete
           await db
             .del()
@@ -38,36 +46,45 @@ export default <ICommand>{
             .andWhere('channel_id', interaction.channelId)
             .from(tn.user_channel);
 
-          // TODO: Reply a better message
-          interaction.reply({ content: 'Salon supprimé!', ephemeral: true });
+          interaction.reply({
+            content: tr.t('deleted'),
+            ephemeral: true,
+          });
         } else {
+          // Channel not found in db
           // Insert
-          await db.insert(<TableUserChannel>{
-            user_id: UserDB.id,
-            discord_id: interaction.user.id,
-            channel_id: interaction.channelId
-          }).into(tn.user_channel);
+          await db
+            .insert(<TableUserChannel>{
+              user_id: UserDB.id,
+              discord_id: interaction.user.id,
+              channel_id: interaction.channelId,
+            })
+            .into(tn.user_channel);
 
           const userPlaylist = await db
-            .select<TablePlaylist<'select'>>('id')
+            .select<TablePlaylist<'s'>>('id')
             .from(tn.user_playlist)
             .where('user_id', UserDB.id)
             .first();
 
-          if (userPlaylist != undefined) {
-            // TODO: Reply a better message
-            interaction.reply({ content: 'Salon sauvegardé!', ephemeral: true });
-          } else {
-            interaction.reply({ content: `Salon sauvegardé! Mais vous n'avez pas configurer de playlist sur le site: ${process.env.APP_URI}/playlist`, ephemeral: true });
-          }
+          interaction.reply({
+            content:
+              userPlaylist != undefined
+                ? tr.t('saved')
+                : tr.t('saveNoPlaylist', [process.env.APP_URI]),
+            ephemeral: true,
+          });
         }
       } catch (error) {
-        // TODO: Report incident
+        // TODO: Report
         logger.error(error);
-        interaction.reply(tn.message.dbError);
+        interaction.reply(tr.t('message.dbError'));
       }
     } else {
-      interaction.reply({ content: 'Utilisateur introuvable. Merci de vous enregistrer au préalable en tapant la command `/register`', ephemeral: true });
+      interaction.reply({
+        content: tr.t('notFound'),
+        ephemeral: true,
+      });
     }
-  }
+  },
 };

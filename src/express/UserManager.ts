@@ -1,13 +1,22 @@
 import type {
-  TableTokens, TableUser, TablePlaylist, TableRegisterLink, Tokens, Playlist,
-  SpotifyUser, SpotifyURI, GenericResponse, DiscordUser,
+  TableTokens,
+  TableUser,
+  TablePlaylist,
+  TableRegisterLink,
+  Tokens,
+  Playlist,
+  SpotifyUser,
+  SpotifyURI,
+  GenericResponse,
+  DiscordUser,
+  TableUserChannel,
 } from '../interfaces';
-import { getServerBearerToken } from './SpotifyUtils';
+import { getServerBearerToken } from '../utils';
 import tn from '../constants';
 import db from '../db';
 import logger from '../logger';
 
-export interface IClassUser /* extends Omit<TableUser, 'deleted_at'> */ {
+export interface IClassUser {
   id?: number;
   spotify_id: string;
   discord_id?: string;
@@ -20,16 +29,14 @@ export interface IClassUser /* extends Omit<TableUser, 'deleted_at'> */ {
   tokens?: Partial<Tokens>;
 }
 
-export default class User implements IClassUser {
+export default class UserManager implements IClassUser {
   id!: number;
   spotify_id!: string;
   discord_id?: string;
   spotify_name!: string;
   discord_name?: string;
-
   spotify_user?: SpotifyUser;
   discord_user?: DiscordUser;
-
   tokens?: Partial<Tokens>;
 
   constructor(spotify_id: string, data?: SpotifyUser) {
@@ -38,7 +45,7 @@ export default class User implements IClassUser {
   }
 
   // set this.id
-  async getUser(spotify_id = this.spotify_id): Promise<User> {
+  async getUser(spotify_id = this.spotify_id): Promise<UserManager> {
     const dbQuery: TableUser = await db
       .select('*')
       .from(tn.user)
@@ -49,7 +56,7 @@ export default class User implements IClassUser {
     return this;
   }
 
-  setUser(data: User): User {
+  setUser(data: UserManager | TableUser<'s'>): UserManager {
     Object.assign(this, data);
     return this;
   }
@@ -57,7 +64,8 @@ export default class User implements IClassUser {
   async linkDiscord({ discord_id, discord_name }: TableRegisterLink) {
     await db
       .update({
-        discord_id, discord_name
+        discord_id,
+        discord_name,
       })
       .from(tn.user)
       .where('id', this.id);
@@ -66,30 +74,38 @@ export default class User implements IClassUser {
     this.discord_id = discord_id;
     this.discord_user = {
       ...this.discord_user,
-      ...this.parseDiscordName(discord_name)
+      ...this.parseDiscordName(discord_name),
     };
   }
 
-  parseDiscordName(discord_name: string): Pick<DiscordUser, 'display_name' | 'discriminator'> {
+  parseDiscordName(
+    discord_name: string
+  ): Pick<DiscordUser, 'display_name' | 'discriminator'> {
     const split = discord_name.split('#');
     return {
       display_name: split[0],
-      discriminator: split[1]
+      discriminator: split[1],
     };
   }
 
-  async updateUser(): Promise<User> {
+  async updateUser(): Promise<UserManager> {
     await db
       .insert(<TableUser>{
         spotify_id: this.spotify_id,
-        spotify_name: this.spotify_user?.display_name
+        spotify_name: this.spotify_user?.display_name,
       })
-      .onConflict().merge()
+      .onConflict()
+      .merge()
       .into(tn.user);
     return this;
   }
 
-  async updateToken({ access_token, scope, expires_in, refresh_token }: Tokens): Promise<User> {
+  async updateToken({
+    access_token,
+    scope,
+    expires_in,
+    refresh_token,
+  }: Tokens): Promise<UserManager> {
     this.tokens = {
       access_token,
       refresh_token,
@@ -103,7 +119,7 @@ export default class User implements IClassUser {
           access_token,
           scope,
           expires_in,
-          refresh_token
+          refresh_token,
         })
         .into(tn.user_tokens);
     } else {
@@ -119,12 +135,15 @@ export default class User implements IClassUser {
     return this;
   }
 
-  async addUserPlaylist(id: string, playlist_name: string | null = null): Promise<void> {
+  async addUserPlaylist(
+    id: string,
+    playlist_name: string | null = null
+  ): Promise<void> {
     await db
       .insert<TablePlaylist>({
         user_id: this.id,
         playlist_id: id,
-        playlist_name: playlist_name,
+        playlist_name,
       })
       .into(tn.user_playlist);
   }
@@ -145,6 +164,14 @@ export default class User implements IClassUser {
       .where('user_id', this.id);
   }
 
+  async getUserChannel(): Promise<TableUserChannel[]> {
+    // prettier-ignore
+    return await db
+      .select('*')
+      .from(tn.user_channel)
+      .where('user_id', this.id);
+  }
+
   async getTokens(): Promise<Tokens> {
     // TODO: Read tokens from class itself (add field date for this.tokens and check expiration date
 
@@ -156,11 +183,16 @@ export default class User implements IClassUser {
       .first();
 
     const current_date = new Date().getTime();
-    const token_date = new Date(db_tokens.created_at).getTime() + (db_tokens.expires_in * 1000);
+    const token_date =
+      new Date(db_tokens.created_at).getTime() + db_tokens.expires_in * 1000;
 
     // Token is expired
     if (token_date < current_date) {
-      logger.debug('Token is expired', new Date(token_date), new Date(current_date));
+      logger.debug(
+        'Token is expired',
+        new Date(token_date),
+        new Date(current_date)
+      );
       const newToken = await this.refreshToken(db_tokens.refresh_token);
       this.updateToken(newToken);
       return newToken;
@@ -173,41 +205,50 @@ export default class User implements IClassUser {
   //
 
   /**
-  * Get user's playlist
-  * https://developer.spotify.com/documentation/web-api/reference/#/operations/get-list-users-playlists
-  * @param offset The index of the first playlist to return.
-  *   Default: 0 (the first object). Maximum offset: 100.000.
-  *   Use with limit to get the next set of playlists.
-  * @param limit Maximum number of items to return. Default 20. Minimum: 1. Maximum: 50
-  */
-  async fetchMyPlaylists(offset = 0, limit = 20): Promise<GenericResponse<Playlist>> {
+   * Get user's playlist
+   * https://developer.spotify.com/documentation/web-api/reference/#/operations/get-list-users-playlists
+   * @param offset The index of the first playlist to return.
+   *   Default: 0 (the first object). Maximum offset: 100.000.
+   *   Use with limit to get the next set of playlists.
+   * @param limit Maximum number of items to return. Default 20. Minimum: 1. Maximum: 50
+   */
+  async fetchMyPlaylists(
+    offset = 0,
+    limit = 20
+  ): Promise<GenericResponse<Playlist>> {
     const tokens = await this.getTokens();
 
-    const API_URL = new URL(`https://api.spotify.com/v1/me/playlists?${new URLSearchParams({
-      offset: String(offset), limit: String(limit)
-    })}`);
+    const API_URL = new URL(
+      `https://api.spotify.com/v1/me/playlists?${new URLSearchParams({
+        offset: String(offset),
+        limit: String(limit),
+      })}`
+    );
 
     return await fetch(API_URL, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${tokens.access_token}`,
-      }
-    }).then(res => res.json());
+        Authorization: `Bearer ${tokens.access_token}`,
+      },
+    }).then((res) => res.json());
   }
 
-  async addItemsToPlaylist(playlist_id: string, uris: SpotifyURI[]): Promise<void> {
+  async addItemsToPlaylist(
+    playlist_id: string,
+    uris: SpotifyURI[]
+  ): Promise<void> {
     const tokens = await this.getTokens();
     await fetch(`https://api.spotify.com/v1/playlists/${playlist_id}/tracks`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${tokens.access_token}`,
+        Authorization: `Bearer ${tokens.access_token}`,
       },
       body: JSON.stringify({
-        uris: uris
-      })
-    }).then(res => res.json());
+        uris,
+      }),
+    }).then((res) => res.json());
   }
 
   /**
@@ -222,8 +263,8 @@ export default class User implements IClassUser {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': getServerBearerToken(),
-      }
-    }).then(resp => resp.json());
+        Authorization: getServerBearerToken(),
+      },
+    }).then((resp) => resp.json());
   }
 }

@@ -1,0 +1,104 @@
+{% extends 'layout.html' %} {% block content %}
+
+<head>
+  <title>Channel</title>
+</head>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit&family=Readex+Pro:wght@200;400;700&display=swap"
+  rel="stylesheet" />
+
+<style>
+  .channel>ul {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .channel>ul>li {
+    display: flex;
+    flex-direction: column;
+    width: max-content;
+    height: max-content;
+
+    max-width: 200px;
+    padding: 1em;
+    border-radius: 5px;
+
+    margin: calc(100vw / 90);
+    background-color: var(--dark-gray);
+
+    cursor: pointer;
+  }
+
+  .channel>ul>li:hover {
+    transition: all 0.5s ease-in-out;
+    box-shadow: inset var(--green) 0 0 20px 5px !important;
+  }
+
+  .channel>ul>li.selected {
+    /* blur spread */
+    box-shadow: var(--green) 0 0 5px 0.1px, inset var(--green) 0 0 5px 0.1px;
+  }
+
+  .channel>ul>li>img {
+    border-radius: 5px;
+    margin-bottom: 0.5em;
+  }
+
+  .channel>ul>li>div.name {
+    font-size: larger;
+  }
+
+  .channel>ul>li>div.description {
+    font-size: medium;
+    color: gray;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    margin-bottom: 0.5em;
+  }
+
+  .channel>ul>li>div.channel_id {
+    display: block;
+    color: gray;
+    opacity: 30%;
+    font-size: xx-small;
+  }
+
+  .channel>ul>li>a {
+    color: gray;
+    align-self: end;
+    font-size: small;
+  }
+
+  .channel>ul>li>a:hover {
+    color: var(--green);
+  }
+
+  footer {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+  }
+
+  footer>a {
+    margin: 1em;
+  }
+</style>
+
+<div class="channel">
+  <ul>
+    {% asyncEach channel in channels %}
+    <li id="{{channel.id}}">
+      <div class="id">{{channel.id | safe }}</div>
+      <div class="discordId">{{channel.discord_id | safe }}</div>
+      <div class="channelId">{{channel.channel_id | safe }}</div>
+    </li>
+    {% endeach %}
+  </ul>
+</div>
+{% endblock %}

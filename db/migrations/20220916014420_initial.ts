@@ -62,7 +62,6 @@ export async function up(knex: Knex): Promise<void> {
   ]);
 }
 
-
 export async function down(knex: Knex): Promise<void> {
   await Promise.all([
     [
@@ -75,7 +74,6 @@ export async function down(knex: Knex): Promise<void> {
       tn.user,
     ].forEach(async (table: string): Promise<void> => {
       await knex.schema.dropTable(table);
-    })
+    }),
   ]);
 }
-

@@ -1,10 +1,10 @@
-import type { Tokens } from '../interfaces';
 import express from 'express';
 import crypto from 'crypto';
+import { getMyProfile, getRegisterLink, getServerBearerToken } from '../utils';
+import { ActionType, type Tokens } from '../interfaces';
 import { AUTH_CALLBACK_PATH, REDIRECT_URI, regex } from '../constants';
-import { getMyProfile, getRegisterLink, getServerBearerToken } from './SpotifyUtils';
-import User from './User';
-import logger from '../logger';
+import dbLogger from '../dbLogger';
+import UserManager from './UserManager';
 
 const router = express.Router();
 
@@ -23,7 +23,9 @@ router.get('/auth/spotify', async (req, res) => {
     }
   }
 
-  const state = `${crypto.randomBytes(16).toString('hex')}${(uuid) ? `#${uuid}` : ''}`;
+  const state = `${crypto.randomBytes(16).toString('hex')}${
+    uuid ? `#${uuid}` : ''
+  }`;
 
   // https://developer.spotify.com/documentation/general/guides/authorization/scopes/
   const scope = 'playlist-modify-private playlist-read-private';
@@ -59,22 +61,42 @@ router.get(AUTH_CALLBACK_PATH, async (req, res) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': getServerBearerToken()
-      }
-    }).then(resp => resp.json());
+        Authorization: getServerBearerToken(),
+      },
+    }).then((resp) => resp.json());
 
     const currentProfile = await getMyProfile(tokens.access_token);
-    const profile = new User(currentProfile.id, currentProfile);
+    const profile = new UserManager(currentProfile.id, currentProfile);
     await profile.updateUser();
     await profile.getUser();
     await profile.updateToken(tokens);
 
     if (regex.state_and_uuid.test(state)) {
       const register = await getRegisterLink(state.split('#')[1]);
-      if (register) await profile.linkDiscord(register);
+      if (register) {
+        dbLogger.insert({
+          user_id: profile.id,
+          action_type: ActionType.ACCOUNT_LINKING,
+          metadata: {
+            ip: req.ip,
+            ips: req.ips,
+            hostname: req.hostname,
+            uuid: state,
+          },
+        });
+        await profile.linkDiscord(register);
+      }
     }
 
-    logger.debug(`get ${AUTH_CALLBACK_PATH}`, profile);
+    dbLogger.insert({
+      user_id: profile.id,
+      action_type: ActionType.LOGIN,
+      metadata: {
+        ip: req.ip,
+        ips: req.ips,
+        hostname: req.hostname,
+      },
+    });
     req.session.user = profile;
     res.redirect('/?connected');
   }

@@ -2,8 +2,8 @@
   @import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@200;400;700&display=swap');
 
   :root {
-    --green: #1DB954;
-    --white: #FFFFFF;
+    --green: #1db954;
+    --white: #ffffff;
     --black: #191414;
     --black2: #121212;
     --dark-gray: #282828;
@@ -26,16 +26,15 @@
 
   a {
     text-decoration: none;
-    color: unset
+    color: unset;
   }
 
   a:hover {
-    color: var(--green)
+    color: var(--green);
   }
 </style>
 
 <body>
-  {% include "header.html" ignore missing %}
-  {% block content %}{% endblock %}
+  {% include "header.html" ignore missing %} {% block content %}{% endblock %}
   {% include "footer.html" ignore missing %}
 </body>

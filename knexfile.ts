@@ -14,10 +14,10 @@ const config: { [key: string]: Knex.Config } = {
       password: process.env.MARIADB_PASSWORD,
     },
     migrations: {
-      directory: './db/migrations'
+      directory: './db/migrations',
     },
     seeds: {
-      directory: './db/seeds'
+      directory: './db/seeds',
     },
   },
   production: {
@@ -29,12 +29,12 @@ const config: { [key: string]: Knex.Config } = {
       password: process.env.MARIADB_PASSWORD,
     },
     migrations: {
-      directory: './db/migrations'
+      directory: './db/migrations',
     },
     seeds: {
-      directory: './db/seeds'
+      directory: './db/seeds',
     },
-  }
+  },
 };
 
 export default config;

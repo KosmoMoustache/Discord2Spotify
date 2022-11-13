@@ -8,7 +8,13 @@ export function email(table: Knex.TableBuilder, columnName: string) {
   return table.string(columnName, 254);
 }
 
-export function references(table: Knex.TableBuilder, tableName: string, notNullable = true, columnName = '', cascade = true) {
+export function references(
+  table: Knex.TableBuilder,
+  tableName: string,
+  notNullable = true,
+  columnName = '',
+  cascade = true
+) {
   const definition = table
     .integer(`${columnName || tableName}_id`)
     .unsigned()

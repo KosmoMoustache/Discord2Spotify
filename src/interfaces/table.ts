@@ -1,21 +1,54 @@
-import { OmitDefault, If } from '.';
+import { OmitDefault, If, ActionType } from '.';
 
-type Table<B extends isQueryType, T extends TableType> = If<isQuery<B>, Omit<OmitDefault<T>, 'id'>, T>;
-type TableType = User | UserTokens | UserChannel | UserPlaylist | RegisterLink | LookupChannel | ActionHistory;
+type Table<B extends isQueryType, T extends TableType> = If<
+  isQuery<B>,
+  Omit<OmitDefault<T>, 'id'>,
+  T
+>;
+type TableType =
+  | User
+  | UserTokens
+  | UserChannel
+  | UserPlaylist
+  | RegisterLink
+  | LookupChannel
+  | ActionHistory;
 
-type isQueryTypeInsert = 'insert' | 'i'
-type isQueryTypeSelect = 'select' | 's'
-type isQueryType = isQueryTypeInsert | isQueryTypeSelect
-type isQuery<T extends isQueryType> = T extends isQueryTypeSelect ? false : T extends isQueryTypeInsert ? true : true
+type isQueryTypeInsert = 'insert' | 'i';
+type isQueryTypeSelect = 'select' | 's';
+type isQueryType = isQueryTypeInsert | isQueryTypeSelect;
+type isQuery<T extends isQueryType> = T extends isQueryTypeSelect
+  ? false
+  : T extends isQueryTypeInsert
+  ? true
+  : true;
 
 // Default 'insert' -> true = Omit id & default columns (created_at & updated_at)
 export type TableUser<T extends isQueryType = 'insert'> = Table<T, User>;
-export type TableTokens<T extends isQueryType = 'insert'> = Table<T, UserTokens>;
-export type TableUserChannel<T extends isQueryType = 'insert'> = Table<T, UserChannel>;
-export type TablePlaylist<T extends isQueryType = 'insert'> = Table<T, UserPlaylist>;
-export type TableRegisterLink<T extends isQueryType = 'insert'> = Table<T, RegisterLink>;
-export type TableLookupChannel<T extends isQueryType = 'insert'> = Table<T, LookupChannel>;
-export type TableActionHistory<T extends isQueryType = 'insert'> = Table<T, ActionHistory>;
+export type TableTokens<T extends isQueryType = 'insert'> = Table<
+  T,
+  UserTokens
+>;
+export type TableUserChannel<T extends isQueryType = 'insert'> = Table<
+  T,
+  UserChannel
+>;
+export type TablePlaylist<T extends isQueryType = 'insert'> = Table<
+  T,
+  UserPlaylist
+>;
+export type TableRegisterLink<T extends isQueryType = 'insert'> = Table<
+  T,
+  RegisterLink
+>;
+export type TableLookupChannel<T extends isQueryType = 'insert'> = Table<
+  T,
+  LookupChannel
+>;
+export type TableActionHistory<T extends isQueryType = 'insert'> = Table<
+  T,
+  ActionHistory
+>;
 
 interface User extends DefaultColumns {
   id: number;
@@ -26,7 +59,7 @@ interface User extends DefaultColumns {
 }
 
 interface UserTokens extends DefaultColumns {
-  id: number
+  id: number;
   user_id: User['id'];
   access_token: string;
   scope: string;
@@ -65,15 +98,15 @@ interface LookupChannel {
   discord_id: string;
 }
 
-interface ActionHistory extends DefaultColumns {
+export interface ActionHistory extends DefaultColumns {
   id: number;
   user_id: User['id'];
-  action_type: string;
+  action_type: ActionType;
   metadata?: Record<string, unknown> | null;
   url?: string | null;
 }
 
 interface DefaultColumns {
-  created_at: string
-  updated_at: string
+  created_at: string;
+  updated_at: string;
 }
