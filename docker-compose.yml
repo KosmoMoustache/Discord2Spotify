@@ -16,6 +16,8 @@ services:
     depends_on:
       - db
     image: adminer
+    volumes:
+      - ./docker/adminer/adminer.css:/var/www/html/adminer.css
     restart: unless-stopped
     ports:
       - 8080:8080

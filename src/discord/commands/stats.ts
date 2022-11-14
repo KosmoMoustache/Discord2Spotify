@@ -1,21 +1,29 @@
-import type { ICommand } from '../../interfaces';
-import { Client, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
+import type { ICommand } from './../../interfaces';
+import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import moment from 'moment';
-import tn from '../../constants/';
-import db from '../../db';
+import tn, { commandsName } from './../../constants';
+import i18n from './../../constants/i18n';
+import db from './../../db';
 
 export default <ICommand>{
   data: new SlashCommandBuilder()
-    .setName('stats')
-    .setDescription('Get information about the bot')
+    .setName(commandsName.STATS)
+    .setDescription('Information of the bot')
+    .setDescriptionLocalizations({
+      fr: 'Information sur le bot',
+    })
     .setDMPermission(false),
   async execute(interaction) {
+    const tr = new i18n(interaction, 'commands.stats');
     // TODO: Docker  ~dockerContainerStats()
     // package systeminformation
     // docker.push(await si.dockerContainerStats());
 
-    const client: Client<true> = interaction.client;
-    const duration = moment.utc(moment.duration(client.uptime).asMilliseconds()).format(' D[d], H[h], m[m]');
+    const { client } = interaction;
+    const duration = moment
+      .utc(moment.duration(client.uptime).asMilliseconds())
+      .format(' D[d], H[h], m[m]');
+
     const channel_scanned = async (): Promise<number> => {
       const query = await db
         .count('id as count')
@@ -24,28 +32,25 @@ export default <ICommand>{
 
       if (query) {
         return query.count as number;
-      } else {
-        return 0;
       }
+      return 0;
     };
 
-    const playlist_updated = 'Soon™';
-
     const embed = new EmbedBuilder();
-    embed.setTitle(`Stats from \`${client.user.username}\``);
+    embed.setTitle(tr.t('title'));
     embed.addFields(
       {
-        name: ':ping_pong: Ping',
+        name: `:ping_pong: ${tr.t('ping')}`,
         value: `┕\`${Math.round(client.ws.ping)}ms\``,
         inline: true,
       },
       {
-        name: ':clock1: Uptime',
+        name: `:clock1: ${tr.t('uptime')}`,
         value: `┕\`${duration}\``,
         inline: true,
       },
       {
-        name: ':file_cabinet: Memory',
+        name: `:file_cabinet: ${tr.t('memory')}`,
         value: `┕\`${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(
           2
         )}mb\``,
@@ -55,29 +60,22 @@ export default <ICommand>{
 
     embed.addFields(
       {
-        name: ':homes: Servers',
+        name: `:homes: ${tr.t('servers')}`,
         value: `┕\`${client.guilds.cache.size}\``,
         inline: true,
       },
       {
-        name: ':cd: Playlist updated',
-        value: `┕\`${playlist_updated}\``,
-        inline: true,
-      },
-      {
-        name: ':hash: Channels scanned',
+        name: `:hash: ${tr.t('channelScanned')}`,
         value: `┕\`${await channel_scanned()}\``,
-        inline: true
+        inline: true,
       }
     );
 
-    embed.addFields(
-      {
-        name: ':robot: Version',
-        value: `┕\`v${tn.version}\``,
-        inline: true,
-      }
-    );
+    embed.addFields({
+      name: `:robot: ${tr.t('version')}`,
+      value: `┕\`v${tn.version}\``,
+      inline: true,
+    });
 
     interaction.reply({ embeds: [embed] });
   },

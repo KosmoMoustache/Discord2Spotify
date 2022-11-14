@@ -1,14 +1,12 @@
-{% extends 'layout.html' %}
-
-{% block content %}
-<div style="display: flex; flex-direction: column; align-items: center;">
+{% extends 'layout.html' %} {% block content %}
+<div style="display: flex; flex-direction: column; align-items: center">
   <h1>Bienvenue sur Discord2Spotify</h1>
-  <p style="width: 80%;">
-    Disclaimer: Discord2Spotify est en beta, les services proposés peuvent être sujet à changement, que ce soit l'interface du site, identité visuelle, ou les interactions avec le service sur Discord
+  <p style="width: 80%">
+    Disclaimer: Discord2Spotify est en beta, les services proposés peuvent être
+    sujet à changement, que ce soit l'interface du site, identité visuelle, ou
+    les interactions avec le service sur Discord
   </p>
-  <a href="{{ discord.invite_link }}">
-    Ajouter le bot sur son serveur
-  </a>
+  <a href="{{ discord.invite_link }}"> Ajouter le bot sur son serveur </a>
   {% if user %}
   <h2>Bonjour, {{ user.spotify_name }}.</h2>
   {% endif %}

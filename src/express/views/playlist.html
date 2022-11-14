@@ -1,24 +1,25 @@
-{% extends 'layout.html' %}
-
-{% block content %}
+{% extends 'layout.html' %} {% block content %}
 
 <head>
   <title>Playlist</title>
 </head>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit&family=Readex+Pro:wght@200;400;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Outfit&family=Readex+Pro:wght@200;400;700&display=swap"
+  rel="stylesheet"
+/>
 
 <style>
-  .playlist>ul {
+  .playlist > ul {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
   }
 
-  .playlist>ul>li {
+  .playlist > ul > li {
     display: flex;
     flex-direction: column;
     width: max-content;
@@ -34,51 +35,50 @@
     cursor: pointer;
   }
 
-  .playlist>ul>li:hover {
-    transition: all .5s ease-in-out;
+  .playlist > ul > li:hover {
+    transition: all 0.5s ease-in-out;
     box-shadow: inset var(--green) 0 0 20px 5px !important;
   }
 
-  .playlist>ul>li.selected {
+  .playlist > ul > li.selected {
     /* blur spread */
-    box-shadow: var(--green) 0 0 5px .1px, inset var(--green) 0 0 5px .1px;
+    box-shadow: var(--green) 0 0 5px 0.1px, inset var(--green) 0 0 5px 0.1px;
   }
 
-  .playlist>ul>li>img {
+  .playlist > ul > li > img {
     border-radius: 5px;
-    margin-bottom: .5em;
+    margin-bottom: 0.5em;
   }
 
-  .playlist>ul>li>div.name {
+  .playlist > ul > li > div.name {
     font-size: larger;
-
   }
 
-  .playlist>ul>li>div.description {
+  .playlist > ul > li > div.description {
     font-size: medium;
     color: gray;
     overflow: hidden;
     -webkit-box-orient: vertical;
     display: -webkit-box;
     -webkit-line-clamp: 2;
-    margin-bottom: .5em;
+    margin-bottom: 0.5em;
   }
 
-  .playlist>ul>li>div.playlist_id {
+  .playlist > ul > li > div.playlist_id {
     display: block;
     color: gray;
     opacity: 30%;
     font-size: xx-small;
   }
 
-  .playlist>ul>li>a {
+  .playlist > ul > li > a {
     color: gray;
     align-self: end;
     font-size: small;
   }
 
-  .playlist>ul>li>a:hover {
-    color: var(--green)
+  .playlist > ul > li > a:hover {
+    color: var(--green);
   }
 
   footer {
@@ -87,7 +87,7 @@
     justify-content: center;
   }
 
-  footer>a {
+  footer > a {
     margin: 1em;
   }
 </style>
@@ -95,7 +95,7 @@
 <script>
   window.addEventListener('load', () => {
     const liE = document.getElementsByTagName('li');
-    Array.from(liE).forEach(el => {
+    Array.from(liE).forEach((el) => {
       el.addEventListener('click', handlePlaylistClick);
     });
 
@@ -107,35 +107,37 @@
             method: 'DELETE',
             credentials: 'same-origin',
             headers: {
-              'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              id: this.id
-            })
-          }).then(window.location.reload())
+              id: this.id,
+            }),
+          }).then(window.location.reload());
         } else {
           this.className += 'selected';
           const response = await fetch('/playlist', {
             method: 'POST',
             credentials: 'same-origin',
             headers: {
-              'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              id: this.id
-            })
-          }).then(window.location.reload())
+              id: this.id,
+            }),
+          }).then(window.location.reload());
         }
       }
-    };
-  })
+    }
+  });
 </script>
 
 <div class="playlist">
   <ul>
     {% asyncEach playlist in playlists %}
     <li id="{{playlist.id}}" class="{{ 'selected' if (playlist.selected) }}">
-      <img src="{{playlist.images[0].url if playlist.images[0].url else 'noCover.webp'}}">
+      <img
+        src="{{playlist.images[0].url if playlist.images[0].url else 'noCover.webp'}}"
+      />
       <div class="name">{{playlist.name | safe }}</div>
       <div class="description">{{playlist.description | safe }}</div>
       <a href="{{ playlist.external_urls.spotify }}">Voir sur Spotify</a>

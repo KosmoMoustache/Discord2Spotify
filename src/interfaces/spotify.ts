@@ -1,45 +1,60 @@
-export type IResponse<T> = GenericResponse<T> & (AuthenticationError | RegularError)
-export type APIResponse<T> = T & AuthenticationError & RegularError
+export type IResponse<T> = GenericResponse<T> &
+  (AuthenticationError | RegularError);
+export type APIResponse<T> = T & AuthenticationError & RegularError;
 
 export type GenericResponse<T> = {
-  href: string,
-  items: T[],
-  limit: number
-  next: string | null
-  offset: string
-  previous: string
-  total: number
-}
+  href: string;
+  items: T[];
+  limit: number;
+  next: string | null;
+  offset: string;
+  previous: string;
+  total: number;
+};
 
-type HTTPCode = 200 | 201 | 202 | 204 | 304 | 400 | 401 | 403 | 404 | 429 | 500 | 502 | 503;
+type HTTPCode =
+  | 200
+  | 201
+  | 202
+  | 204
+  | 304
+  | 400
+  | 401
+  | 403
+  | 404
+  | 429
+  | 500
+  | 502
+  | 503;
+
 type AuthenticationError = {
-  error: string
-  error_description: string
-}
+  error: string;
+  error_description: string;
+};
 type RegularError = {
   error: {
-    status: HTTPCode
-    message: string
-  }
-}
+    status: HTTPCode;
+    message: string;
+  };
+};
 export type ResponseCreated = {
-  snapshot_id: string
-}
+  snapshot_id: string;
+};
 
 export interface SpotifyUser {
   country: string;
   display_name: string;
   email: string;
   explicit_content: {
-    filter_enable: boolean,
-    filter_locked: boolean,
-  }
+    filter_enable: boolean;
+    filter_locked: boolean;
+  };
   external_urls: {
     spotify: SpotifyURI;
   };
   followers: {
-    href: string,
-    total: number,
+    href: string;
+    total: number;
   };
   href: string;
   id: string;
@@ -56,7 +71,6 @@ export interface Tokens {
   refresh_token?: string;
 }
 
-
 // Spotify URI example: "spotify:track:4iV5W9uYEdYUVa79Axb7Rh,spotify:track:1301WleyT98MSxVHPZCA6M"
 export type SpotifyURI = `spotify:${string}:${string}`;
 
@@ -64,34 +78,34 @@ export type SpotifyURI = `spotify:${string}:${string}`;
 export type Track = {
   album: {
     [key: string]: unknown;
-  },
+  };
   artists: {
     [key: string]: unknown;
-  },
+  };
   href: string;
   id: string;
   name: string;
   track_number: number;
   external_urls: {
     spotify: string;
-  } & Record<string, unknown>
-}
+  } & Record<string, unknown>;
+};
 
 export type Image = {
-  url: string
-  height: number
-  width: number
-}
+  url: string;
+  height: number;
+  width: number;
+};
 export type Playlist = {
   collaborative: boolean;
   description: string;
   external_urls: {
     spotify: string;
-  },
+  };
   followers: {
     href: null | string;
     total: number;
-  },
+  };
   href: string;
   id: string;
   images: Image[];
@@ -99,17 +113,17 @@ export type Playlist = {
   owner: {
     external_urls: {
       spotify: string;
-    },
+    };
     followers: {
       href: string;
       total: 0;
-    },
+    };
     href: string;
     id: string;
     type: 'user';
     uri: SpotifyURI;
     display_name: string;
-  },
+  };
   public: boolean;
   snapshot_id: string;
   tracks: {
@@ -120,7 +134,7 @@ export type Playlist = {
     offset: number;
     previous: string;
     total: number;
-  },
+  };
   type: string;
   uri: SpotifyURI;
-}
+};

@@ -10,4 +10,3 @@ const connectionConfig = knexConfig[environment];
 const connection = knex(connectionConfig);
 
 export default connection;
-
