@@ -63,7 +63,7 @@ router.get(AUTH_CALLBACK_PATH, async (req, res) => {
         'Content-Type': 'application/x-www-form-urlencoded',
         Authorization: getServerBearerToken(),
       },
-    }).then((resp) => resp.json());
+    }).then((res) => res.json());
 
     const currentProfile = await getMyProfile(tokens.access_token);
     const profile = new UserManager(currentProfile.id, currentProfile);

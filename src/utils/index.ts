@@ -1,6 +1,6 @@
+import type { SQLError, SpotifyUser, TableRegisterLink } from '../interfaces';
 import type { Client } from 'discord.js';
 import { ActivityType } from 'discord.js';
-import type { SQLError, SpotifyUser, TableRegisterLink } from '../interfaces';
 import tn from '../constants';
 import db from '../db';
 
@@ -25,13 +25,14 @@ export function getServerBearerToken(): string {
  * @description https://developer.spotify.com/documentation/web-api/reference/#/operations/get-current-users-profile
  */
 export async function getMyProfile(token: string): Promise<SpotifyUser> {
-  return await fetch('https://api.spotify.com/v1/me', {
+  const response = await fetch('https://api.spotify.com/v1/me', {
     method: 'GET',
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
-  }).then((res) => res.json());
+  });
+  return (await response.json()) as SpotifyUser;
 }
 
 export async function getRegisterLink(

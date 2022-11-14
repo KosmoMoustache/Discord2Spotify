@@ -13,8 +13,6 @@
     "migrate": "knex migrate:up",
     "rollback": "knex migrate:rollback",
     "test": "jest",
-    "compose-stop": "docker compose -f docker-compose.dev.yml stop",
-    "compose-start": "docker compose -f docker-compose.dev.yml start",
     "adminer-win": "curl -o ./docker/adminer/adminer.css https://raw.githubusercontent.com/KosmoMoustache/Hydra-Dark-Theme-for-Adminer/master/adminer.css"
   },
   "author": "",

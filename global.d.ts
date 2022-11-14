@@ -1,4 +1,4 @@
-import type { IClassUser } from './src/interfaces';
+import type { IClassUser } from './src/express/UserManager';
 
 declare global {
   declare namespace NodeJS {

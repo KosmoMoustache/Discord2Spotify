@@ -248,7 +248,7 @@ export default class UserManager implements IClassUser {
       body: JSON.stringify({
         uris,
       }),
-    }).then((res) => res.json());
+    });
   }
 
   /**
@@ -265,6 +265,6 @@ export default class UserManager implements IClassUser {
         'Content-Type': 'application/x-www-form-urlencoded',
         Authorization: getServerBearerToken(),
       },
-    }).then((resp) => resp.json());
+    }).then((res) => res.json());
   }
 }

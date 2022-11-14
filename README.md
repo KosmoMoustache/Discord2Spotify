@@ -8,7 +8,6 @@ https://discord.com/api/oauth2/authorize?client_id=1017722603261136896&permissio
 https://discord.com/api/oauth2/authorize?client_id=1017722603261136896&redirect_uri=https%3A%2F%2Fspotify.kosmo.ovh&response_type=code&scope=email%20identify
 
 TODO:
-Translation fr->en
 webhook report
 todos
 change bot's name

@@ -1,9 +1,9 @@
-import type { ICommand } from '../../interfaces';
+import type { ICommand } from './../../interfaces';
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import moment from 'moment';
-import tn, { commandsName } from '../../constants';
-import i18n from '../../constants/i18n';
-import db from '../../db';
+import tn, { commandsName } from './../../constants';
+import i18n from './../../constants/i18n';
+import db from './../../db';
 
 export default <ICommand>{
   data: new SlashCommandBuilder()

@@ -9,7 +9,7 @@ import { UpdateActivity } from '../utils';
 import CooldownManager, {
   CooldownData,
   cooldownRules,
-} from '../utils/cooldownManager';
+} from './cooldownManager';
 import { processMessage } from './processMessage';
 import LookupChannel from './lookupChannel';
 import Commands from './commands';
