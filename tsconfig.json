@@ -1,12 +1,7 @@
 // https://www.typescriptlang.org/docs/handbook/tsconfig-json.html
 {
-  "files": [
-    "global.d.ts"
-  ],
-  "include": [
-    "./",
-    "./src/**/*"
-  ],
+  "files": ["global.d.ts"],
+  "include": ["./", "./src/**/*"],
   "ts-node": {
     "transpileOnly": true /* Disable ts-node typechecking */
   },

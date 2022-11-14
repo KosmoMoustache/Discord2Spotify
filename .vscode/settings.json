@@ -2,8 +2,5 @@
   "files.exclude": {
     "**/node_modules": true
   },
-  "cSpell.words": [
-    "knexfile",
-    "spotify"
-  ]
+  "cSpell.words": ["knexfile", "spotify"]
 }

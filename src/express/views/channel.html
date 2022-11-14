@@ -6,18 +6,20 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Outfit&family=Readex+Pro:wght@200;400;700&display=swap"
-  rel="stylesheet" />
+<link
+  href="https://fonts.googleapis.com/css2?family=Outfit&family=Readex+Pro:wght@200;400;700&display=swap"
+  rel="stylesheet"
+/>
 
 <style>
-  .channel>ul {
+  .channel > ul {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
   }
 
-  .channel>ul>li {
+  .channel > ul > li {
     display: flex;
     flex-direction: column;
     width: max-content;
@@ -33,26 +35,26 @@
     cursor: pointer;
   }
 
-  .channel>ul>li:hover {
+  .channel > ul > li:hover {
     transition: all 0.5s ease-in-out;
     box-shadow: inset var(--green) 0 0 20px 5px !important;
   }
 
-  .channel>ul>li.selected {
+  .channel > ul > li.selected {
     /* blur spread */
     box-shadow: var(--green) 0 0 5px 0.1px, inset var(--green) 0 0 5px 0.1px;
   }
 
-  .channel>ul>li>img {
+  .channel > ul > li > img {
     border-radius: 5px;
     margin-bottom: 0.5em;
   }
 
-  .channel>ul>li>div.name {
+  .channel > ul > li > div.name {
     font-size: larger;
   }
 
-  .channel>ul>li>div.description {
+  .channel > ul > li > div.description {
     font-size: medium;
     color: gray;
     overflow: hidden;
@@ -62,20 +64,20 @@
     margin-bottom: 0.5em;
   }
 
-  .channel>ul>li>div.channel_id {
+  .channel > ul > li > div.channel_id {
     display: block;
     color: gray;
     opacity: 30%;
     font-size: xx-small;
   }
 
-  .channel>ul>li>a {
+  .channel > ul > li > a {
     color: gray;
     align-self: end;
     font-size: small;
   }
 
-  .channel>ul>li>a:hover {
+  .channel > ul > li > a:hover {
     color: var(--green);
   }
 
@@ -85,7 +87,7 @@
     justify-content: center;
   }
 
-  footer>a {
+  footer > a {
     margin: 1em;
   }
 </style>

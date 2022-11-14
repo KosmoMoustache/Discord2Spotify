@@ -131,16 +131,6 @@ client.on('interactionCreate', async (interaction) => {
   }
 });
 
-    const isGuild = ids.find((value) => value.isGuild === true);
-    interaction.reply({
-      content: tr.t('message.rateLimited', [
-        cd.humanizeDuration(duration(ids), interaction),
-      ]),
-      ephemeral: isGuild ? false : true,
-    });
-  }
-});
-
 client.on('channelDelete', async (channel) => {
   const dbQuery = await db
     .del()
