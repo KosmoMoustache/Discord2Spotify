@@ -7,6 +7,8 @@
   "scripts": {
     "bot": "nodemon ./src/discord/index.ts",
     "web": "nodemon ./src/express/index.ts",
+    "prod-bot": "ts-node ./src/discord/index.ts",
+    "prod-web": "ts-node ./src/express/index.ts",
     "build": "tsc ./src/index.ts",
     "lint": "eslint ./src/**/*.ts --config .eslintrc.json --fix",
     "deployCommands": "ts-node ./src/discord/deploy_commands.ts",
