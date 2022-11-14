@@ -3,24 +3,17 @@
 Git repos:
 https://github.com/KosmoMoustache/Discord2Spotify
 
-Inviter le bot:
-https://discord.com/api/oauth2/authorize?client_id=1017722603261136896&permissions=156766579776&redirect_uri=https%3A%2F%2Fspotify.kosmo.ovh&response_type=code&scope=email%20identify%20bot%20applications.commands
-https://discord.com/api/oauth2/authorize?client_id=1017722603261136896&redirect_uri=https%3A%2F%2Fspotify.kosmo.ovh&response_type=code&scope=email%20identify
+Bot invite url:
 
 TODO:
-webhook report
-todos
-change bot's name
-build
-docker compose
-docker compose prod & dev
--bot
--db
--express app
-mise en prod
 
-Prob déconnections:
-increase closeTimeout
+- [ ] webhook report
+- [ ] todos inside code
+- [ ] change bot's name
+- [ ] docker container
+  - [ ] build typescript to javascript
+    - [ ] separate bot/express code
+  - [ ] docker compose prod & dev (bot, express, db)
 
 https://developer.spotify.com/documentation/general/design-and-branding/
 
