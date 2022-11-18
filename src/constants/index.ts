@@ -27,7 +27,7 @@ export const regex = {
 
 export const AUTH_CALLBACK_PATH = '/auth/spotify/callback';
 export const REDIRECT_URI =
-  process.env.NODE_ENV === 'production'
+  process.env.NODE_ENV != 'development'
     ? `https://spotify.kosmo.ovh${AUTH_CALLBACK_PATH}`
     : `http://localhost:${process.env.EXPRESS_PORT}${AUTH_CALLBACK_PATH}`;
 
