@@ -42,8 +42,8 @@ export async function processMessage(message: Message): Promise<void> {
             urlParsed.spotify_url,
           ]);
         });
+        message.react('👍');
       }
-      message.react('👍');
     });
   }
 }
